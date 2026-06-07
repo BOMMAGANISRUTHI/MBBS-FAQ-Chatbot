@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedQuery — MBBS Abroad FAQ Chatbot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fa-solid fa-stethoscope"></i></div>
+      <div>
+        <div class="brand-name">MedQuery</div>
+        <div class="brand-sub">MBBS Abroad Assistant</div>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" id="sidebarSearch" placeholder="Search FAQs…" autocomplete="off" />
+    </div>
+
+    <div class="sidebar-section-label">Categories</div>
+    <nav class="cat-nav" id="catNav">
+      {% for cat in categories %}
+      <button class="cat-btn {% if cat == 'All' %}active{% endif %}" data-cat="{{ cat }}">
+        <i class="cat-icon fa-solid
+          {% if cat == 'All' %}fa-border-all
+          {% elif cat == 'Eligibility' %}fa-clipboard-check
+          {% elif cat == 'Countries' %}fa-earth-asia
+          {% elif cat == 'Fees & Scholarships' %}fa-coins
+          {% elif cat == 'Admission Process' %}fa-file-circle-check
+          {% elif cat == 'Curriculum & Duration' %}fa-book-open-reader
+          {% elif cat == 'Recognition & Licensing' %}fa-id-badge
+          {% elif cat == 'Student Life & Safety' %}fa-shield-heart
+          {% elif cat == 'Visa & Travel' %}fa-passport
+          {% elif cat == 'After MBBS' %}fa-user-doctor
+          {% else %}fa-circle-question
+          {% endif %}
+        "></i>
+        <span>{{ cat }}</span>
+      </button>
+      {% endfor %}
+    </nav>
+
+    <div class="sidebar-stats">
+      <div class="stat-card">
+        <div class="stat-value">{{ total_faqs }}</div>
+        <div class="stat-label">Total FAQs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statAsked">0</div>
+        <div class="stat-label">Asked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statConf">—</div>
+        <div class="stat-label">Avg Match</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="chat-main">
+
+    <header class="topbar">
+      <div class="topbar-bot">
+        <div class="bot-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div>
+          <div class="bot-name">MedQuery AI</div>
+          <div class="bot-status">
+            <span class="online-dot"></span>
+            Online · NLP-powered
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <span class="tech-pill">
+          <i class="fa-solid fa-brain"></i> TF-IDF · Cosine Similarity
+        </span>
+        <span class="cat-active-pill" id="activeCatPill">All Categories</span>
+        <button onclick="clearChat()" class="clear-btn">
+          <i class="fa-solid fa-trash-can"></i> Clear Chat
+        </button>
+      </div>
+    </header>
+
+    <div class="messages" id="messages">
+
+      <div class="msg bot">
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-content">
+          <div class="bubble bot-bubble">
+            <p>👋 Hello! I'm <strong>MedQuery</strong>, your AI assistant for MBBS abroad queries.</p>
+            <p style="margin-top:8px">I'm powered by <strong>TF-IDF cosine similarity</strong> and have answers to <strong>{{ total_faqs }} questions</strong> across topics like eligibility, fees, countries, licensing, and more.</p>
+            <p style="margin-top:8px;opacity:.7;font-size:12px">Use the sidebar to filter by category. The more specific your question, the better my match!</p>
+          </div>
+          <div class="suggestion-chips" id="suggestionChips">
+            {% for s in suggestions %}
+            <button class="chip" onclick="askFromChip(this)">{{ s }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="userInput"
+                  class="user-input"
+                  placeholder="Ask anything about MBBS abroad…"
+                  rows="1"
+                  maxlength="400"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="input-hint">Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</div>
+    </div>
+
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
